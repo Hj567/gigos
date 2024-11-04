@@ -15,7 +15,7 @@ langchain.verbose = False
 load_dotenv()
 
 # Access API key from environment variable
-OPENAI_API_KEY = "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"
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 # Define a fixed file path for the .txt file
 TEXT_FILE_PATH = "test-data.txt"
