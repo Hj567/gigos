@@ -5,13 +5,17 @@ from langchain.chains.question_answering import load_qa_chain
 from langchain.llms import OpenAI
 from langchain.callbacks import get_openai_callback
 import streamlit as st
+from dotenv import load_dotenv
+import os
 
 import langchain
 langchain.verbose = False
 
-# Insert your API key here (Avoid sharing your code with the API key exposed)
-OPENAI_API_KEY = "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"
+# Load environment variables
+load_dotenv()
 
+# Access API key from environment variable
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 # Define a fixed file path for the .txt file
 TEXT_FILE_PATH = "test-data.txt"
@@ -69,4 +73,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
