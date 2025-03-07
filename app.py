@@ -1,6 +1,6 @@
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.embeddings.openai import OpenAIEmbeddings
-from langchain import FAISS
+from langchain.vectorstores import FAISS
 from langchain.chains.question_answering import load_qa_chain
 from langchain.llms import OpenAI
 from langchain.callbacks import get_openai_callback
@@ -37,7 +37,7 @@ def process_text(text):
 
     knowledge_base = FAISS.from_texts(chunks, embeddings)
 
-    return knowledge_base
+    return knowledge_base, chunks
 
 
 def main():
@@ -48,9 +48,9 @@ def main():
         text = file.read()
 
     # Create a knowledge base object
-    knowledgeBase = process_text(text)
+    knowledgeBase, chunks = process_text(text)
 
-    query = st.text_input('Ask a question about the text file...')
+    query = st.text_input('Ask a question about the Baggage Rules...')
 
     cancel_button = st.button('Cancel')
 
@@ -59,6 +59,7 @@ def main():
 
     if query:
         docs = knowledgeBase.similarity_search(query)
+        sources = [doc.page_content for doc in docs]  # Store sources
 
         llm = OpenAI(model_name="gpt-3.5-turbo", openai_api_key=OPENAI_API_KEY, max_tokens=1000, temperature=0.7)
 
@@ -69,6 +70,11 @@ def main():
             print(cost)
 
             st.write(response["output_text"])
+            
+            # Print sources used
+            st.write("### Sources:")
+            for i, source in enumerate(sources, 1):
+                st.write(f"**Source {i}:** {source[:300]}...")  # Show first 300 characters of each source
 
 
 if __name__ == "__main__":
