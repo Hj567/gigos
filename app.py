@@ -43,7 +43,7 @@ def process_text(text):
 
 
 def main():
-    st.title("Hi, I am JARVIS. How can I assist you?")
+    st.title("Hi, How can I assist you?")
 
     # Read the text file content directly
     with open(TEXT_FILE_PATH, "r", encoding="utf-8") as file:
