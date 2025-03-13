@@ -56,7 +56,7 @@ def main():
         model_name="ft:gpt-4o-mini-2024-07-18:dtc::BAAJT6D6",
         openai_api_key=OPENAI_API_KEY,
         max_tokens=1000,
-        temperature=0.7
+        temperature=0.5
     )
 
     # Setup ConversationalRetrievalChain with session-based memory
