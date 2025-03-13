@@ -46,7 +46,7 @@ def main():
     knowledge_base = process_text(text)
 
     # Setup Chat LLM
-    llm = ChatOpenAI(model_name="gpt-4o", openai_api_key=OPENAI_API_KEY, temperature=0.7)
+    llm = ChatOpenAI(model_name="ft:gpt-4o-mini-2024-07-18:dtc::BAAJT6D6", openai_api_key=OPENAI_API_KEY, max_tokens=1000, temperature=0.7)
 
     # Set up memory buffer for multi-turn conversation
     memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
