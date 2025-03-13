@@ -45,42 +45,51 @@ def main():
     # Initialize knowledge base
     knowledge_base = process_text(text)
 
-    # Setup Chat LLM
-    llm = ChatOpenAI(model_name="ft:gpt-4o-mini-2024-07-18:dtc::BAAJT6D6", openai_api_key=OPENAI_API_KEY, max_tokens=1000, temperature=0.7)
+    # Set up session state memory buffer
+    if "memory" not in st.session_state:
+        st.session_state.memory = ConversationBufferMemory(
+            memory_key="chat_history", return_messages=True
+        )
 
-    # Set up memory buffer for multi-turn conversation
-    memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+    # Setup Chat LLM (DO NOT change model name as requested)
+    llm = ChatOpenAI(
+        model_name="ft:gpt-4o-mini-2024-07-18:dtc::BAAJT6D6",
+        openai_api_key=OPENAI_API_KEY,
+        max_tokens=1000,
+        temperature=0.7
+    )
 
-    # Setup Conversational QA Chain
+    # Setup ConversationalRetrievalChain with session-based memory
     qa_chain = ConversationalRetrievalChain.from_llm(
         llm=llm,
         retriever=knowledge_base.as_retriever(),
-        memory=memory,
+        memory=st.session_state.memory,
         verbose=False
     )
 
-    # Session state for storing conversation history
-    if "chat_history" not in st.session_state:
-        st.session_state.chat_history = []
+    # Session state for chat history (for UI display)
+    if "chat_display" not in st.session_state:
+        st.session_state.chat_display = []
 
     query = st.text_input("💬 Ask your question about baggage rules:")
 
     cancel_button = st.button("❌ Clear Chat")
 
     if cancel_button:
-        st.session_state.chat_history = []
+        st.session_state.chat_display = []
+        st.session_state.memory.clear()
         st.experimental_rerun()
 
     if query:
         with get_openai_callback() as cost:
             response = qa_chain.run(query)
-            st.session_state.chat_history.append(("You", query))
-            st.session_state.chat_history.append(("Jarvis", response))
+            st.session_state.chat_display.append(("You", query))
+            st.session_state.chat_display.append(("Jarvis", response))
             print(cost)
 
     # Display chat history
     st.markdown("### 🧠 Chat History")
-    for sender, message in st.session_state.chat_history:
+    for sender, message in st.session_state.chat_display:
         if sender == "You":
             st.markdown(f"**🧑 {sender}:** {message}")
         else:
